@@ -1,4 +1,3 @@
 User-agent: *
 Allow: /
-
 Sitemap: https://tornadocash-app.github.io/sitemap.xml
