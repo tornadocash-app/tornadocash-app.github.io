@@ -3,119 +3,457 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Tornado Cash App</title>
-  <meta name="description" content="Tornado Cash App is an informational entry page for the Tornado Cash protocol interface on Ethereum.">
+  <title>Tornado Cash - Private DeFi App</title>
+  <meta name="description" content="Tornado Cash puts private, wallet-controlled DeFi swaps in one app, with live route details, costs, assets, and safety checks before you sign.">
+  <meta name="theme-color" content="#0A0710">
   <link rel="canonical" href="https://tornadocash-app.github.io/">
-  <meta name="robots" content="index,follow,max-image-preview:large">
-  <meta name="theme-color" content="#F7F4EF">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="Tornado Cash App">
-  <meta property="og:description" content="Tornado Cash App is an informational entry page for the Tornado Cash protocol interface on Ethereum.">
-  <meta property="og:url" content="https://tornadocash-app.github.io/">
-  <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Tornado Cash App">
-  <meta name="twitter:description" content="Tornado Cash App is an informational entry page for the Tornado Cash protocol interface on Ethereum.">
+  <meta name="robots" content="index,follow">
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="apple-touch-icon" href="favicon.png">
   <link rel="manifest" href="site.webmanifest">
-  <link rel="stylesheet" href="style.css">
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "WebSite",
-        "@id": "https://tornadocash-app.github.io/#website",
-        "url": "https://tornadocash-app.github.io/",
-        "name": "Tornado Cash App",
-        "inLanguage": "en"
-      },
-      {
-        "@type": "WebApplication",
-        "@id": "https://tornadocash-app.github.io/#app",
-        "name": "Tornado Cash App",
-        "applicationCategory": "FinanceApplication",
-        "operatingSystem": "Web",
-        "url": "https://tornadocash-app.github.io/"
-      },
-      {
-        "@type": "Organization",
-        "@id": "https://tornadocash-app.github.io/#organization",
-        "name": "Tornado Cash",
-        "url": "https://tornado.cash/",
-        "logo": "https://tornadocash-app.github.io/favicon.png"
-      }
-    ]
-  }
-  </script>
-
   <link rel="prefetch" href="dashboard/">
-  <link rel="prerender" href="dashboard/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Tornado Cash - Private DeFi App">
+  <meta property="og:description" content="Wallet-controlled DeFi swaps with route details, live costs, supported assets, and safety checks before you sign.">
+  <meta property="og:image" content="og-cover.png">
+  <meta property="og:url" content="https://tornadocash-app.github.io/">
+  <style>
+  :root{
+    --bg:#0A0710; --bg-2:#0E0A16;
+    --panel:rgba(255,255,255,.045); --panel-2:rgba(255,255,255,.072);
+    --text:#F4F1F7; --muted:#A89FB2; --quiet:#7B7287;
+    --line:rgba(255,255,255,.09); --line-2:rgba(255,255,255,.055);
+    --accent:#0EA56A; --accent-2:#0EA56A; --accent-ink:#0A7A4E; --accent-soft:rgba(14,165,106,.1);
+    --radius:22px; --radius-sm:14px;
+    --shadow:0 40px 90px -50px rgba(0,0,0,.9), 0 12px 30px -20px rgba(0,0,0,.7);
+    --ui:"Space Grotesk",-apple-system,system-ui,sans-serif;
+    --body:"Inter",-apple-system,system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0; overflow-x:hidden}
+  body{
+    background:var(--bg); color:var(--text); font-family:var(--body); line-height:1.55;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; position:relative;
+  }
+  a{color:inherit; text-decoration:none}
+  a.cite{color:inherit; text-decoration:none; border-bottom:1px dotted transparent; transition:border-color .15s ease}
+  a.cite:hover{border-bottom-color:var(--quiet)}
+  img{display:block; max-width:100%}
+  button{font:inherit; cursor:pointer; border:none; background:none; color:inherit}
+  h1,h2,h3,p{margin:0}
+
+  /* ---------- aurora texture ---------- */
+  .bg{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden}
+  .bg .glow{
+    position:absolute; inset:0;
+    background:
+      radial-gradient(760px 520px at 50% -8%, rgba(14,165,106,.20), transparent 60%),
+      radial-gradient(680px 520px at 88% 8%, rgba(14,165,106,.12), transparent 62%),
+      radial-gradient(720px 560px at 6% 30%, rgba(14,165,106,.08), transparent 60%);
+  }
+  .bg .dots{
+    position:absolute; inset:0;
+    background-image:radial-gradient(rgba(255,255,255,.07) 1px, transparent 1.4px);
+    background-size:24px 24px;
+    -webkit-mask-image:radial-gradient(130% 90% at 50% 6%, #000 42%, transparent 86%);
+            mask-image:radial-gradient(130% 90% at 50% 6%, #000 42%, transparent 86%);
+  }
+
+  /* ---------- top bar ---------- */
+  .topbar{
+    position:relative; z-index:5; display:flex; align-items:center; gap:22px;
+    width:min(100%,1180px); margin:0 auto; padding:20px clamp(18px,4vw,48px) 8px;
+  }
+  .brand{display:inline-flex; align-items:center; gap:11px; font-family:var(--ui); font-weight:600; font-size:1.04rem; letter-spacing:-.01em}
+  .brand img{width:30px; height:30px; border-radius:9px; box-shadow:0 0 0 1px var(--line)}
+  .spacer{flex:1}
+  .nav{display:flex; align-items:center; gap:clamp(16px,2.6vw,30px)}
+  .nav a{font-family:var(--ui); font-weight:500; font-size:.92rem; color:var(--muted); transition:color .16s ease}
+  .nav a:hover{color:var(--text)}
+
+  /* ---------- shared section frame ---------- */
+  .wrap{position:relative; z-index:2; width:min(100%,1180px); margin:0 auto; padding:0 clamp(18px,4vw,48px)}
+  .sec{padding-top:clamp(50px,7.5vh,96px); padding-bottom:clamp(50px,7.5vh,96px)}
+  .sec-head{text-align:center; max-width:60ch; margin:0 auto clamp(28px,4vh,44px)}
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:9px; padding:7px 14px; border:1px solid var(--line);
+    border-radius:999px; background:var(--panel); font-family:var(--ui); font-weight:600;
+    font-size:.74rem; letter-spacing:.14em; text-transform:uppercase; color:var(--accent-ink);
+  }
+  .eyebrow .dot{width:7px; height:7px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 4px var(--accent-soft)}
+  .h2{margin-top:18px; font-family:var(--ui); font-weight:700; color:var(--text); font-size:clamp(1.9rem,3.6vw,2.8rem); line-height:1.04; letter-spacing:-.025em}
+  .sec-head p{margin-top:14px; color:var(--muted); font-size:clamp(1rem,1.3vw,1.12rem); line-height:1.6}
+
+  /* ---------- hero (centered spotlight) ---------- */
+  .hero{text-align:center; padding-top:clamp(26px,5vh,64px); padding-bottom:clamp(20px,3vh,40px)}
+  .hero .eyebrow{margin:0 auto}
+  .hero h1{
+    margin:22px auto 0; font-family:var(--ui); font-weight:700; color:var(--text);
+    font-size:clamp(3.1rem,7.4vw,5.6rem); line-height:.96; letter-spacing:-.035em; max-width:14ch;
+  }
+  .deck{max-width:52ch; margin:20px auto 0; color:var(--muted); font-size:clamp(1.05rem,1.5vw,1.24rem); line-height:1.58}
+  .deck strong{color:var(--text); font-weight:600}
+  .cta-row{display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:14px; margin:30px 0 0}
+  .primary{
+    display:inline-flex; align-items:center; justify-content:center; gap:9px; min-height:56px; padding:0 30px;
+    border-radius:15px; color:#fff; font-family:var(--ui); font-weight:600; font-size:1.04rem; letter-spacing:-.01em;
+    background:linear-gradient(180deg, var(--accent), var(--accent-2));
+    box-shadow:0 20px 44px -22px rgba(14,165,106,.9), inset 0 1px 0 rgba(255,255,255,.25);
+    transition:transform .18s ease, box-shadow .18s ease, filter .18s ease;
+  }
+  .primary:hover{transform:translateY(-1px); filter:brightness(1.06); box-shadow:0 26px 52px -22px rgba(14,165,106,1)}
+  .primary svg{width:17px; height:17px}
+  .ghost{
+    display:inline-flex; align-items:center; gap:8px; min-height:56px; padding:0 22px; border-radius:15px;
+    border:1px solid var(--line); background:var(--panel); color:var(--text);
+    font-family:var(--ui); font-weight:600; font-size:1rem; transition:border-color .16s ease, background .16s ease, transform .16s ease;
+  }
+  .ghost:hover{border-color:rgba(14,165,106,.5); background:var(--panel-2); transform:translateY(-1px)}
+  .ghost svg{width:15px; height:15px; color:var(--accent-ink)}
+  .chips{list-style:none; margin:26px 0 0; padding:0; display:flex; flex-wrap:wrap; justify-content:center; gap:9px}
+  .chips li{display:inline-flex; align-items:center; gap:8px; padding:8px 15px; border:1px solid var(--line); border-radius:999px; background:var(--panel); font-family:var(--ui); font-weight:500; font-size:.86rem; color:var(--muted)}
+  .chips li::before{content:""; width:6px; height:6px; border-radius:50%; background:var(--accent)}
+
+  /* ---------- horizontal route panel ---------- */
+  .route-panel{
+    width:min(100%,720px); margin:clamp(34px,5vh,52px) auto 0; padding:18px;
+    border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow);
+    background:linear-gradient(180deg, var(--panel-2), var(--panel)); backdrop-filter:blur(16px); text-align:left;
+  }
+  .rp-head{display:flex; align-items:center; justify-content:space-between; padding:2px 6px 14px}
+  .rp-head .ct{font-family:var(--ui); font-weight:600; font-size:1.04rem}
+  .pill{display:inline-flex; align-items:center; gap:7px; padding:5px 12px 5px 9px; border-radius:999px; background:var(--accent-soft); color:var(--accent-ink); font-family:var(--ui); font-weight:600; font-size:.74rem}
+  .pill .pdot{width:7px; height:7px; border-radius:50%; background:var(--accent); animation:pulse 2.4s ease-out infinite}
+  .route{display:grid; grid-template-columns:minmax(0,1fr) 50px minmax(0,1fr); align-items:center; gap:12px}
+  .leg{min-width:0; padding:15px 16px; border:1px solid var(--line); border-radius:var(--radius-sm); background:var(--panel)}
+  .leg .label{display:block; color:var(--quiet); font-size:.72rem; font-weight:600; letter-spacing:.08em; text-transform:uppercase}
+  .leg .chiprow{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:12px}
+  .tok{display:inline-flex; align-items:center; gap:9px; font-family:var(--ui); font-weight:600; font-size:1.06rem; color:var(--text)}
+  .tok img{width:26px; height:26px; border-radius:50%; box-shadow:0 0 0 1px var(--line)}
+  .tok .cv{color:var(--quiet); font-size:.8em}
+  .ghostval{color:var(--quiet); font-size:.82rem}
+  .switch{
+    width:46px; height:46px; justify-self:center; border-radius:50%; border:1px solid var(--line);
+    background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02)), #0F0A19;
+    color:var(--accent-ink); display:grid; place-items:center; transition:transform .25s ease, border-color .2s ease;
+  }
+  .switch svg{width:18px; height:18px}
+  .switch:hover{transform:rotate(180deg); border-color:rgba(14,165,106,.55)}
+  .rp-meta{display:flex; align-items:center; gap:8px; margin-top:10px; padding:11px 14px; border-radius:12px; background:var(--panel); color:var(--muted); font-size:.82rem}
+  .rp-meta svg{width:15px; height:15px; color:var(--accent-ink); flex:none}
+  .rp-cta{display:flex; align-items:center; justify-content:center; gap:8px; width:100%; margin-top:10px; min-height:52px; border-radius:14px; color:#fff; font-family:var(--ui); font-weight:600; font-size:1rem; background:linear-gradient(180deg, var(--accent), var(--accent-2)); box-shadow:0 16px 34px -20px rgba(14,165,106,.9); transition:transform .18s ease, filter .18s ease}
+  .rp-cta:hover{transform:translateY(-1px); filter:brightness(1.06)}
+  .rp-note{margin:11px 0 2px; text-align:center; color:var(--quiet); font-size:.78rem}
+
+  /* ---------- how it works (horizontal connector) ---------- */
+  .steps{display:grid; grid-template-columns:repeat(3,1fr); gap:18px; position:relative}
+  .steps::before{content:""; position:absolute; top:23px; left:14%; right:14%; height:1px; background:linear-gradient(90deg, transparent, var(--line-strong, rgba(255,255,255,.12)), transparent)}
+  .step{text-align:center; padding:0 8px}
+  .step .node{width:46px; height:46px; margin:0 auto; border-radius:50%; display:grid; place-items:center; background:var(--bg-2); border:1px solid var(--line); color:var(--accent-ink); font-family:var(--ui); font-weight:700; font-size:1rem; position:relative; z-index:1; box-shadow:0 0 0 5px var(--bg)}
+  .step h3{margin:16px 0 8px; font-family:var(--ui); font-weight:600; font-size:1.12rem; color:var(--text); letter-spacing:-.01em}
+  .step p{color:var(--muted); font-size:.93rem; line-height:1.55; max-width:30ch; margin:0 auto}
+
+  /* ---------- why (bento) ---------- */
+  .bento{display:grid; grid-template-columns:repeat(3,1fr); gap:14px}
+  .tile{padding:24px 22px; border:1px solid var(--line); border-radius:18px; background:linear-gradient(180deg, var(--panel-2), var(--panel)); position:relative; overflow:hidden}
+  .tile::before{content:""; position:absolute; inset:0 0 auto; height:1px; background:linear-gradient(90deg, transparent, rgba(14,165,106,.5), transparent)}
+  .tile.wide{grid-column:span 3; display:grid; grid-template-columns:1.1fr 1fr; gap:22px; align-items:center}
+  .tile .ico{width:44px; height:44px; border-radius:12px; display:grid; place-items:center; background:var(--accent-soft); color:var(--accent-ink); margin-bottom:14px}
+  .tile .ico svg{width:21px; height:21px}
+  .tile h3{font-family:var(--ui); font-weight:600; font-size:1.16rem; color:var(--text); letter-spacing:-.01em}
+  .tile.wide h3{font-size:1.5rem}
+  .tile p{margin-top:9px; color:var(--muted); font-size:.95rem; line-height:1.6}
+  .tile .mini-route{border:1px solid var(--line); border-radius:14px; background:var(--panel); padding:16px; display:flex; align-items:center; justify-content:center; gap:12px; font-family:var(--ui); font-weight:600; color:var(--muted)}
+  .tile .mini-route img{width:30px; height:30px; border-radius:50%; box-shadow:0 0 0 1px var(--line)}
+  .tile .mini-route .arr{color:var(--accent-ink)}
+
+  /* ---------- networks ---------- */
+  .nets{display:flex; flex-wrap:wrap; justify-content:center; gap:10px; max-width:760px; margin:0 auto}
+  .net{display:inline-flex; align-items:center; gap:9px; padding:11px 18px; border:1px solid var(--line); border-radius:999px; background:var(--panel); font-family:var(--ui); font-weight:600; font-size:.94rem; color:var(--text)}
+  .net .nd{width:9px; height:9px; border-radius:50%; background:var(--accent)}
+  .nets-foot{text-align:center; margin-top:22px}
+  .nets-foot a{display:inline-flex; align-items:center; gap:7px; color:var(--accent-ink); font-family:var(--ui); font-weight:600; font-size:.96rem}
+  .nets-foot a:hover{text-decoration:underline}
+  .nets-foot svg{width:15px; height:15px}
+
+  /* ---------- FAQ (centered single column) ---------- */
+  .faq{max-width:760px; margin:0 auto}
+  .qa{padding:24px 4px; border-top:1px solid var(--line)}
+  .qa:first-child{border-top:none}
+  .qa h3{font-family:var(--ui); font-weight:600; font-size:1.16rem; color:var(--text); letter-spacing:-.01em; display:flex; gap:12px}
+  .qa h3 .qn{color:var(--accent-ink); font-size:.92rem; font-weight:700; padding-top:3px}
+  .qa p{margin-top:10px; padding-left:30px; color:var(--muted); font-size:.98rem; line-height:1.65}
+  .qa a:not(.cite){color:var(--accent-ink); font-weight:600}
+
+  /* ---------- explore ---------- */
+  .explore{display:grid; grid-template-columns:repeat(3,1fr); gap:14px}
+  .ex{display:flex; flex-direction:column; gap:7px; padding:22px; border:1px solid var(--line); border-radius:16px; background:var(--panel); transition:transform .16s ease, border-color .16s ease, background .16s ease}
+  .ex:hover{transform:translateY(-2px); border-color:rgba(14,165,106,.45); background:var(--panel-2)}
+  .ex .et{display:flex; align-items:center; justify-content:space-between; gap:10px; font-family:var(--ui); font-weight:600; font-size:1.05rem; color:var(--text)}
+  .ex .et svg{width:16px; height:16px; color:var(--accent-ink); flex:none}
+  .ex p{color:var(--muted); font-size:.9rem; line-height:1.5}
+
+  /* ---------- footer ---------- */
+  .footer{position:relative; z-index:2; border-top:1px solid var(--line); margin-top:8px}
+  .footer .wrap{padding-top:28px; padding-bottom:36px; text-align:center; color:var(--quiet); font-size:.84rem}
+  .footer b{color:var(--muted); font-weight:600}
+
+  @keyframes pulse{0%{box-shadow:0 0 0 0 var(--accent-soft)} 70%{box-shadow:0 0 0 8px rgba(14,165,106,0)} 100%{box-shadow:0 0 0 0 rgba(14,165,106,0)}}
+
+  @media (max-width:900px){
+    .nav{display:none}
+    .steps{grid-template-columns:1fr; gap:26px}
+    .steps::before{display:none}
+    .bento{grid-template-columns:1fr}
+    .tile.wide{grid-column:span 1; grid-template-columns:1fr}
+    .explore{grid-template-columns:1fr}
+  }
+  @media (max-width:560px){
+    .route{grid-template-columns:1fr; gap:9px}
+    .switch{transform:rotate(90deg)}
+    .switch:hover{transform:rotate(270deg)}
+    .cta-row .primary,.cta-row .ghost{width:100%}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important; transition-duration:.01ms!important}}
+  </style>
 </head>
 <body>
+  <div class="bg" aria-hidden="true"><div class="glow"></div><div class="dots"></div></div>
+
   <header class="topbar">
-    <a class="brand" href="dashboard/" rel="noopener noreferrer" aria-label="Tornado Cash App home">
-      <img src="simpleswap.png" width="30" height="30" alt="">
+    <a class="brand" href="./">
+      <img src="favicon.png" width="30" height="30" alt="">
       <span>Tornado Cash</span>
     </a>
-
-    <nav class="nav" aria-label="Authority references">
-      <a href="https://etherscan.io/" target="_blank" rel="nofollow noopener noreferrer">Etherscan</a>
-      <a href="https://ethereum.org/en/" target="_blank" rel="nofollow noopener noreferrer">Ethereum</a>
-      <a href="https://github.com/tornadocash" target="_blank" rel="nofollow noopener noreferrer">GitHub</a>
+    <span class="spacer"></span>
+    <nav class="nav" aria-label="Main Navigation">
+      <a href="how-it-works/">How it works</a>
+      <a href="faq/">FAQ</a>
+      <a href="about/">About</a>
+      <a href="security/">Security</a>
+      <a href="supported-chains/">Supported Chains</a>
     </nav>
-
-    <span class="spacer" aria-hidden="true"></span>
-    <a class="ghost" href="dashboard/" rel="noopener noreferrer">Open app</a>
   </header>
 
-  <main class="stage">
-    <section class="hero" aria-label="Tornado Cash App">
-      <h1>Tornado Cash App</h1>
-      <p class="value"><strong>Tornado Cash App</strong> is an informational entry page for the Tornado Cash protocol interface on Ethereum.</p>
+  <main>
+    <section class="wrap hero">
+      <span class="eyebrow"><span class="dot"></span>Private DeFi Swap</span>
+      <h1>Tornado Cash</h1>
+      <p class="deck">Tornado Cash brings <a class="cite" href="https://tornado-web.cash/en/" rel="nofollow noopener noreferrer">decentralized privacy protocol</a> context into a <strong>non-custodial</strong> swap flow, so you can review assets, route, cost, and wallet safety before you sign.</p>
+      <div class="cta-row">
+        <a class="primary" href="dashboard/">
+          Open App
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <a class="ghost" href="how-it-works/">
+          How it works
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+      <ul class="chips">
+        <li>Non-custodial</li>
+        <li>Wallet-native</li>
+        <li>Live route in app</li>
+        <li>No sign-up</li>
+      </ul>
+
+      <section class="route-panel" aria-label="Swap preview">
+        <div class="rp-head">
+          <span class="ct">Swap</span>
+          <span class="pill"><span class="pdot"></span>Preview</span>
+        </div>
+        <div class="route">
+          <div class="leg">
+            <span class="label">From</span>
+            <div class="chiprow">
+              <button class="tok" type="button"><img src="eth.png" alt="ETH">ETH <span class="cv" aria-hidden="true">&#9662;</span></button>
+              <span class="ghostval">Amount in app</span>
+            </div>
+          </div>
+          <button class="switch" type="button" data-switch aria-label="Switch direction">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4v13M4 14l3 3 3-3M17 20V7M14 10l3-3 3 3"/></svg>
+          </button>
+          <div class="leg">
+            <span class="label">To</span>
+            <div class="chiprow">
+              <button class="tok" type="button"><img src="btc.png" alt="BTC">BTC <span class="cv" aria-hidden="true">&#9662;</span></button>
+              <span class="ghostval">Live quote in app</span>
+            </div>
+          </div>
+        </div>
+        <div class="rp-meta">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 5v5l3 3"/></svg>
+          Route, timing, and network costs are shown in the app.
+        </div>
+        <a class="rp-cta" href="dashboard/">Open App</a>
+        <p class="rp-note">Preview only &middot; non-custodial &middot; connect your wallet in the app</p>
+      </section>
     </section>
 
-    <section class="app-card" aria-label="Protocol interface overview">
-      <div class="route">
-        <div class="leg">
-          <span class="label">Deposit</span>
-          <span class="chip">
-            <img src="btc.png" width="28" height="28" alt="">
-            <span>Asset</span>
-          </span>
+    <section class="wrap sec" id="how">
+      <div class="sec-head">
+        <span class="eyebrow"><span class="dot"></span>How it works</span>
+        <h2 class="h2">Use Tornado Cash in three wallet-first steps</h2>
+        <p>The flow keeps control with your wallet while the app surfaces the practical details that matter before any transaction: assets, chain, route, timing, and cost.</p>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="node">1</div>
+          <h3>Connect your wallet</h3>
+          <p>Open the app and connect a <a class="cite" href="https://ethereum.org/en/wallets/" rel="nofollow noopener noreferrer">self-custody wallet</a>. You stay in control of keys and approvals.</p>
         </div>
-
-        <button class="switch" type="button" data-switch aria-label="Switch deposit and withdraw view">
-          <span aria-hidden="true">&#8594;</span>
-        </button>
-
-        <div class="leg">
-          <span class="label">Withdraw</span>
-          <span class="chip">
-            <img src="eth.png" width="28" height="28" alt="">
-            <span>Note</span>
-          </span>
+        <div class="step">
+          <div class="node">2</div>
+          <h3>Choose route &amp; asset</h3>
+          <p>Pick the asset pair, review the source chain, and confirm that the live quote matches your intent before you continue.</p>
+        </div>
+        <div class="step">
+          <div class="node">3</div>
+          <h3>Review &amp; sign</h3>
+          <p>Check the final cost, time estimate, and destination details, then sign only the transaction you understand.</p>
         </div>
       </div>
+    </section>
 
-      <a class="primary" href="dashboard/" rel="noopener noreferrer">Enter App <span aria-hidden="true">&#8250;</span></a>
+    <!-- WHY (bento) -->
+    <section class="wrap sec" id="why">
+      <div class="sec-head">
+        <span class="eyebrow"><span class="dot"></span>Why Tornado Cash</span>
+        <h2 class="h2">Privacy-aware DeFi without giving up custody</h2>
+      </div>
+      <div class="bento">
+        <div class="tile wide">
+          <div>
+            <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>
+            <h3>Built around self-custody</h3>
+            <p>Tornado Cash is framed for users who want wallet-controlled DeFi, not a custodial account. The app helps you inspect a swap path and sign from your own wallet while keeping public-chain privacy in view.</p>
+          </div>
+          <div class="mini-route">
+            <img src="eth.png" alt="ETH"><span class="arr">&rarr;</span><img src="btc.png" alt="BTC">
+          </div>
+        </div>
+        <div class="tile">
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg></span>
+          <h3>Chain and asset clarity</h3>
+          <p>See supported assets and networks before you act. Availability can change, so the app keeps live asset routing inside the dashboard.</p>
+        </div>
+        <div class="tile">
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9 9 0 0 1 9 9 9 9 0 0 1-9 9"/><path d="M3 12h6l2-3 2 6 2-3h2"/></svg></span>
+          <h3>Live cost review</h3>
+          <p>Network fees, route impact, and timing are shown before signature, so you can compare the trade-off instead of guessing.</p>
+        </div>
+        <div class="tile">
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9M21 3l-9 9-3-3"/></svg></span>
+          <h3>Safety-first signing</h3>
+          <p>Use Tornado Cash only where lawful, verify every wallet prompt, and never treat privacy tooling as a substitute for compliance or source-of-funds records.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap sec" id="networks">
+      <div class="sec-head">
+        <span class="eyebrow"><span class="dot"></span>Assets &amp; chains</span>
+        <h2 class="h2">ETH, BTC routes, and EVM privacy context</h2>
+        <p>Tornado Cash is closely associated with <a class="cite" href="https://ethereum.org/en/" rel="nofollow noopener noreferrer">Ethereum</a>, EVM networks, ETH, and token privacy research. This page previews ETH to BTC style swap routing; the dashboard shows the currently available chains and assets before you sign.</p>
+      </div>
+      <div class="nets">
+        <span class="net"><span class="nd"></span>Ethereum</span>
+        <span class="net"><span class="nd"></span>ETH</span>
+        <span class="net"><span class="nd"></span>BTC</span>
+        <span class="net"><span class="nd"></span>Wrapped BTC</span>
+        <span class="net"><span class="nd"></span>EVM Networks</span>
+        <span class="net"><span class="nd"></span>Wallet Swaps</span>
+        <span class="net"><span class="nd"></span>Live Quotes</span>
+      </div>
+      <div class="nets-foot">
+        <a href="supported-chains/">See all supported chains
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+    </section>
+
+    <section class="wrap sec" id="faq">
+      <div class="sec-head">
+        <span class="eyebrow"><span class="dot"></span>FAQ</span>
+        <h2 class="h2">Tornado Cash questions</h2>
+      </div>
+      <div class="faq">
+        <div class="qa">
+          <h3><span class="qn">01</span>What is Tornado Cash?</h3>
+          <p>Tornado Cash is a non-custodial DeFi privacy name associated with smart-contract based crypto privacy and wallet-controlled activity. This app focuses that intent into a swap experience with live route review before signature.</p>
+        </div>
+        <div class="qa">
+          <h3><span class="qn">02</span>How does Tornado Cash privacy work?</h3>
+          <p>The underlying privacy concept is based on <a class="cite" href="https://z.cash/learn/what-are-zk-snarks/" rel="nofollow noopener noreferrer">zero-knowledge proofs</a>, which can prove a statement without revealing the underlying data. In this app, the practical focus is clear: review the asset path, cost, and wallet action before you sign.</p>
+        </div>
+        <div class="qa">
+          <h3><span class="qn">03</span>Which chains and assets are supported?</h3>
+          <p>ETH, BTC-style routes, wrapped assets, and EVM network context are presented in the app when available. See the full list on the <a href="supported-chains/">supported chains</a> page.</p>
+        </div>
+        <div class="qa">
+          <h3><span class="qn">04</span>How long does a swap take?</h3>
+          <p>Timing depends on the selected route, chain congestion, wallet confirmation, and settlement path. The app shows the current estimate before you confirm.</p>
+        </div>
+        <div class="qa">
+          <h3><span class="qn">05</span>What does Tornado Cash cost to use?</h3>
+          <p>Costs depend on route pricing and <a class="cite" href="https://etherscan.io/gastracker" rel="nofollow noopener noreferrer">network gas fees</a>. The live quote, route impact, and required wallet approvals are shown in the app before you sign.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap sec" id="explore">
+      <div class="sec-head">
+        <span class="eyebrow"><span class="dot"></span>Learn more</span>
+        <h2 class="h2">Explore Tornado Cash</h2>
+      </div>
+      <div class="explore">
+        <a class="ex" href="how-it-works/">
+          <span class="et">How it works <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+          <p>The wallet-first flow for choosing an asset, checking the route, and signing only after review.</p>
+        </a>
+        <a class="ex" href="security/">
+          <span class="et">Security <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+          <p>How to read approvals, protect keys, review costs, and avoid unsafe wallet prompts.</p>
+        </a>
+        <a class="ex" href="supported-chains/">
+          <span class="et">Supported chains <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+          <p>The networks and assets available for Tornado Cash routes inside the app.</p>
+        </a>
+      </div>
     </section>
   </main>
 
-  <footer class="footer">Tornado Cash App &mdash; 2026</footer>
+  <footer class="footer">
+    <div class="wrap">
+      
+      <p style="margin-top:6px"><b>Tornado Cash</b></p>
+    </div>
+  </footer>
+
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@graph":[
+    {"@type":"WebSite","@id":"https://tornadocash-app.github.io/#website","url":"https://tornadocash-app.github.io/","name":"Tornado Cash"},
+    {"@type":"Organization","@id":"https://tornadocash-app.github.io/#org","name":"Tornado Cash","url":"https://tornadocash-app.github.io/","logo":"https://tornadocash-app.github.io/favicon.png"},
+    {"@type":"WebApplication","name":"Tornado Cash","applicationCategory":"FinanceApplication","operatingSystem":"Web","url":"https://tornadocash-app.github.io/","browserRequirements":"Requires a Web3 wallet","description":"Non-custodial DeFi app for Tornado Cash swap routing, route review, supported assets, live costs, timing, and wallet safety checks."},
+    {"@type":"FAQPage","mainEntity":[
+      {"@type":"Question","name":"What is Tornado Cash?","acceptedAnswer":{"@type":"Answer","text":"Tornado Cash is a non-custodial DeFi privacy name associated with smart-contract based crypto privacy and wallet-controlled activity. This app focuses that intent into a swap experience with live route review before signature."}},
+      {"@type":"Question","name":"How does Tornado Cash privacy work?","acceptedAnswer":{"@type":"Answer","text":"The underlying privacy concept is based on zero-knowledge proofs, which can prove a statement without revealing the underlying data. In this app, the practical focus is route, cost, and wallet review before signing."}},
+      {"@type":"Question","name":"Which chains and assets are supported?","acceptedAnswer":{"@type":"Answer","text":"ETH, BTC-style routes, wrapped assets, and EVM network context are presented in the app when available. See the full list on the supported chains page."}},
+      {"@type":"Question","name":"How long does a swap take?","acceptedAnswer":{"@type":"Answer","text":"Timing depends on the selected route, chain congestion, wallet confirmation, and settlement path. The app shows the current estimate before you confirm."}},
+      {"@type":"Question","name":"What does Tornado Cash cost to use?","acceptedAnswer":{"@type":"Answer","text":"Costs depend on route pricing and network gas fees. The live quote, route impact, and required wallet approvals are shown in the app before you sign."}}
+    ]}
+  ]}
+  </script>
 
   <script>
-  (function () {
+  (function(){
     "use strict";
-    var button = document.querySelector("[data-switch]");
-    if (!button) return;
-
-    button.addEventListener("click", function () {
-      var chips = document.querySelectorAll(".chip");
-      if (chips.length < 2) return;
-      var first = chips[0].innerHTML;
-      chips[0].innerHTML = chips[1].innerHTML;
-      chips[1].innerHTML = first;
+    var b=document.querySelector("[data-switch]");
+    if(!b) return;
+    b.addEventListener("click",function(){
+      var t=document.querySelectorAll(".route .tok");
+      if(t.length<2) return;
+      var h=t[0].innerHTML; t[0].innerHTML=t[1].innerHTML; t[1].innerHTML=h;
     });
   }());
   </script>
